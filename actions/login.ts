@@ -1,6 +1,7 @@
 "use server";
 
 import { signIn } from "@/auth";
+import { getUserByEmail } from "@/data/user";
 import { DEFUALT_LOGIN_REDIRECT } from "@/routes";
 import { LoginSchema } from "@/schemas";
 import { AuthError } from "next-auth";
@@ -15,13 +16,19 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
   const { email, password } = validatedFields.data;
 
+  const existingUser = await getUserByEmail(email);
+
+  if (!existingUser || !existingUser.email || !existingUser.password) {
+    return { error: "Email does not exist" };
+  }
+
   try {
     await signIn("credentials", {
       email,
       password,
       redirectTo: DEFUALT_LOGIN_REDIRECT,
     });
-    return {success: "Success"}
+    return { success: "Success" };
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
