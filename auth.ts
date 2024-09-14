@@ -6,12 +6,13 @@ import authConfig from "./auth.config";
 
 import { getUserById } from "@/data/user";
 import { UserRole } from "@prisma/client";
+import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
-  pages:{
-    signIn:"/auth/login",
-    error:"auth/error"
+  pages: {
+    signIn: "/auth/login",
+    error: "auth/error",
   },
   events: {
     async linkAccount({ user }) {
@@ -22,14 +23,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   callbacks: {
-    // async signIn({ user }) {
-    //   const existingUser = getUserById(user.id);
+    async signIn({ user, account }) {
+      if (account?.provider !== "credentials") return true;
 
-    //   if (!existingUser || !existingUser.emailVerified) {
-    //     return false;
-    //   }
-    //   return true;
-    // },
+      const existingUser = await getUserById(user.id!);
+
+      if (!existingUser?.emailVerified) return false;
+
+      if (existingUser.isTwoFactorEnabled) {
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+          existingUser.id
+        );
+
+        if (!twoFactorConfirmation) {
+          return false;
+        }
+
+        await db.twoFactorConfirmation.delete({
+          where: { id: twoFactorConfirmation.id },
+        });
+      }
+
+      return true;
+    },
 
     async session({ token, session }) {
       if (token.sub && session.user) {
@@ -39,6 +55,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (token.role && session.user) {
         session.user.role = token.role as UserRole;
       }
+
+      if (session.user) {
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+      }
+
       return session;
     },
     async jwt({ token }) {
@@ -48,6 +69,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (!existingUser) return token;
 
       token.role = existingUser.role;
+      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
       return token;
     },

@@ -18,6 +18,7 @@ import {
 import Header from "@/components/auth/header";
 import Social from "@/components/auth/social";
 import { BackButton } from "@/components/auth/back-button";
+import { BeatLoader } from "react-spinners";
 
 const CardWrapper = ({
   children,
@@ -29,7 +30,7 @@ const CardWrapper = ({
   return (
     <Card className="w-[400px] shadow-md">
       <CardHeader>
-        <Header labal={headerLabel} />
+        <Header label={headerLabel} />
       </CardHeader>
       <CardContent>{children}</CardContent>
       {showSocial && (
@@ -38,7 +39,7 @@ const CardWrapper = ({
         </CardFooter>
       )}
       <CardFooter>
-        <BackButton label={backButtonLabel} href={backButtonHref}/>
+        <BackButton label={backButtonLabel} href={backButtonHref} />
       </CardFooter>
     </Card>
   );
