@@ -15,7 +15,7 @@ import { ExitIcon } from "@radix-ui/react-icons";
 import LogoutButton from "@/components/auth/logout-button";
 
 export const UserButton = () => {
-  const { user, loading } = useCurrentUser();
+  const user = useCurrentUser();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
