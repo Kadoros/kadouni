@@ -4,7 +4,6 @@ import "./globals.css";
 import { getSession, SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { Toaster } from "@/components/ui/sonner";
-import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,16 +19,14 @@ export default async function RootLayout({
 }>) {
   return (
     <SessionProvider>
-      <Suspense fallback={<div>Loading...</div>}>
-        <html lang="en">
-          <body className={inter.className}>
-            <Toaster />
-            <div className="h-full flex items-center justify-center bg-slate-300">
-              {children}
-            </div>
-          </body>
-        </html>
-      </Suspense>
+      <html lang="en">
+        <body className={inter.className}>
+          <Toaster />
+          <div className="h-full flex items-center justify-center bg-slate-300">
+            {children}
+          </div>
+        </body>
+      </html>
     </SessionProvider>
   );
 }
