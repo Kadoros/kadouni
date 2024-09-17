@@ -27,7 +27,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { SettingsSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
 import * as z from "zod";
@@ -55,7 +55,7 @@ const SettingsPage = () => {
     },
   });
 
-  const resetForm = useCallback(() => {
+  const resetForm = () => {
     if (user) {
       form.reset({
         name: user.name || undefined,
@@ -66,11 +66,11 @@ const SettingsPage = () => {
         isTwoFactorEnabled: user.isTwoFactorEnabled || undefined,
       });
     }
-  }, [user, form]);
+  };
 
   useEffect(() => {
     resetForm();
-  }, [user, resetForm]);
+  }, [user, form]);
 
   const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
     setError(undefined);
