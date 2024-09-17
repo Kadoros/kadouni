@@ -32,6 +32,14 @@ export const generateTwoFactorToken = async (email: string) => {
   return twoFactorToken;
 };
 
+/**
+ * Generates a verification token for the given email address, deleting
+ * any existing token before creating a new one.
+ *
+ * @param email The email address to generate a verification token for
+ * @returns A VerificationToken entity
+ */
+
 export const generateVerificationToken = async (email: string) => {
   const token = uuid();
   const expires = new Date(new Date().getTime() + 3600 * 1000);

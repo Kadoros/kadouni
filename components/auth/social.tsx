@@ -7,9 +7,11 @@ import { DEFUALT_LOGIN_REDIRECT } from "@/routes";
 import { signIn } from "next-auth/react";
 
 const Social = () => {
+  const searchParams = new URLSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const onClick = (provider: "google" | "github") => {
     signIn(provider, {
-      callbackUrl: DEFUALT_LOGIN_REDIRECT,
+      callbackUrl: callbackUrl || DEFUALT_LOGIN_REDIRECT,
     });
   };
   return (

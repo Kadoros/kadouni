@@ -10,6 +10,8 @@ const font = Poppins({
   weight: ["600"],
 });
 
+
+
 export default function Home() {
   return (
     <main className="flex flex-col h-full items-center justify-center bg-slate-300">
@@ -24,7 +26,7 @@ export default function Home() {
         </h1>
         <p className="text-lg">simple Auth service</p>
         <div>
-          <LoginButton>
+          <LoginButton mode="model" asChild>
             <Button
               variant={"secondary"}
               size={"lg"}

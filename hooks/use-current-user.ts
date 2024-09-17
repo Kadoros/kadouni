@@ -11,31 +11,31 @@ import { Session } from "next-auth";
  *          `loading` is a boolean indicating whether the session is still
  *          being fetched.
  */
-// export const useCurrentUser = () => {
-//   const [session, setSession] = useState<Session | null>(null);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     const fetchSession = async () => {
-//       try {
-//         const session_ = await getSession();
-//         setSession(session_);
-//       } catch (error) {
-//         console.error("Failed to fetch session:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchSession();
-//   }, []);
-
-//   const user = session?.user; // Extract user from the session
-
-//   return { user, loading };
-// };
-
 export const useCurrentUser = () => {
-  const session = useSession();
-  return session.data?.user;
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const session_ = await getSession();
+        setSession(session_);
+      } catch (error) {
+        console.error("Failed to fetch session:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSession();
+  }, []);
+
+  const user = session?.user; // Extract user from the session
+
+  return user;
 };
+
+// export const useCurrentUser = () => {
+//   const session = useSession();
+//   return session.data?.user;
+// };
