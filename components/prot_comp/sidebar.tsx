@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/collapsible"; // Adjust the import based on your structure
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import Link from "next/link";
 
 const Sidebar: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -53,33 +52,24 @@ const Sidebar: React.FC = () => {
         {item.sub && item.sub.length > 0 ? (
           <Collapsible className="flex flex-col">
             <CollapsibleTrigger>
-              <Link href={item.main.href || "#"} passHref>
-                <Button
-                  variant="ghost"
-                  className={cn(
-                    "flex items-center justify-between w-full h-10 px-4"
-                  )}
-                  onClick={(e) => {
-                    if (item.main.href) {
-                      e.preventDefault(); // Prevent the default action to avoid triggering the toggle functions
-                      window.location.href = item.main.href; // Redirect to href
-                    } else {
-                      toggleNestedExpand(item.id);
-                    }
-                  }}
-                >
-                  <div className="flex ">
-                    {/* Render recDeep number of spans */}
-                    {Array.from({ length: recDeep }).map((_, i) => (
-                      <span className="ml-4" key={i}></span>
-                    ))}
+              <Button
+                variant="ghost"
+                className={cn(
+                  "flex items-center justify-between w-full h-10 px-4"
+                )}
+                onClick={() => toggleNestedExpand(item.id)}
+              >
+                <div className="flex ">
+                  {/* Render recDeep number of spans */}
+                  {Array.from({ length: recDeep }).map((_, i) => (
+                    <span className="ml-4" key={i}></span>
+                  ))}
 
-                    <item.main.icon className="text-gray-700" size={20} />
-                    <span className="ml-2">{item.main.label}</span>
-                  </div>
-                  {isNestedOpened ? <FaAngleDown /> : <FaAngleRight />}
-                </Button>
-              </Link>
+                  <item.main.icon className="text-gray-700" size={20} />
+                  <span className="ml-2">{item.main.label}</span>
+                </div>
+                {isNestedOpened ? <FaAngleDown /> : <FaAngleRight />}
+              </Button>
             </CollapsibleTrigger>
             <CollapsibleContent>
               {item.sub.map((subItem, subIndex) => (
@@ -103,30 +93,21 @@ const Sidebar: React.FC = () => {
             exit={{ opacity: 0, height: recDeep === 0 ? "auto" : 0 }}
             transition={{ duration: 0.3 }}
           >
-            <Link href={item.main.href || "#"} passHref>
-              <Button
-                variant="ghost"
-                className={cn("flex items-center justify-start w-full h-10 px-4")}
-                onClick={(e) => {
-                  if (item.main.href) {
-                    e.preventDefault(); // Prevent the default action to avoid triggering the toggle functions
-                    window.location.href = item.main.href; // Redirect to href
-                  } else {
-                    toggleNestedExpand(item.id);
-                  }
-                }}
-              >
-                {/* Render recDeep number of spans */}
-                {Array.from({ length: recDeep }).map((_, i) => (
-                  <span className="ml-4" key={i}></span>
-                ))}
-                <item.main.icon
-                  className="text-gray-700 flex-shrink-0"
-                  size={20}
-                />
-                <span className="ml-2">{item.main.label}</span>
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              className={cn("flex items-center justify-start w-full h-10 px-4")}
+              onClick={() => toggleNestedExpand(item.id)}
+            >
+              {/* Render recDeep number of spans */}
+              {Array.from({ length: recDeep }).map((_, i) => (
+                <span className="ml-4" key={i}></span>
+              ))}
+              <item.main.icon
+                className="text-gray-700 flex-shrink-0"
+                size={20}
+              />
+              <span className="ml-2">{item.main.label}</span>
+            </Button>
           </motion.div>
         )}
       </div>
@@ -160,7 +141,7 @@ const Sidebar: React.FC = () => {
         animate={{ width: isSidebarExpanded ? "9rem" : "4rem" }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex flex-col space-y-2 pb-3">
+        <div className="flex flex-col space-y-2">
           <div className="w-full h-12">
             <Button
               variant="ghost"
@@ -190,15 +171,8 @@ const Sidebar: React.FC = () => {
                 <div key={index} className="w-full h-12">
                   <Button
                     variant="ghost"
-                    className={`flex items-center justify-start w-full h-12`}
-                    onClick={(e) => {
-                      if (item.main.href) {
-                        e.preventDefault(); // Prevent the default action to avoid triggering the toggle functions
-                        window.location.href = item.main.href; // Redirect to href
-                      } else {
-                        toggleExpand(item.id);
-                      }
-                    }}
+                    className={`flex items-center justify-start w-full h-12  `}
+                    onClick={() => toggleExpand(item.id)}
                   >
                     <IconComponent
                       className="text-gray-700 flex-shrink-0"
@@ -226,15 +200,8 @@ const Sidebar: React.FC = () => {
                 <div key={index} className="w-full h-12">
                   <Button
                     variant="ghost"
-                    className={`flex items-center justify-start w-full h-12`}
-                    onClick={(e) => {
-                      if (item.main.href) {
-                        e.preventDefault(); // Prevent the default action to avoid triggering the toggle functions
-                        window.location.href = item.main.href; // Redirect to href
-                      } else {
-                        toggleExpand(item.id);
-                      }
-                    }}
+                    className={`flex items-center justify-start w-full h-12  `}
+                    onClick={() => toggleExpand(item.id)}
                   >
                     <IconComponent
                       className="text-gray-700 flex-shrink-0"
@@ -285,3 +252,4 @@ const Sidebar: React.FC = () => {
 };
 
 export default Sidebar;
+
