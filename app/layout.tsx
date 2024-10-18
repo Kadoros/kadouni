@@ -22,7 +22,7 @@ export default async function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           <Toaster />
-          <div className="h-full flex items-center justify-center bg-slate-300">
+          <div className="h-full w-full flex items-center justify-center bg-white">
             {children}
           </div>
         </body>
