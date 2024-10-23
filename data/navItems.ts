@@ -20,14 +20,16 @@ import {
   FaUserShield,
   FaBell,
   FaCog,
+  FaRobot,
+  FaComments
 } from "react-icons/fa";
 
 export interface NavItem {
   id: string; // ID for the item
-  main: { 
-    icon: React.ElementType; 
-    label: string; 
-    href?: string;  // Optional href for links
+  main: {
+    icon: React.ElementType;
+    label: string;
+    href?: string; // Optional href for links
   };
   sub?: NavItem[]; // Submenu items (optional)
 }
@@ -41,11 +43,15 @@ export const navTopItems: NavItem[] = [
     id: "1",
     main: { icon: FaFolder, label: "Folder" },
     sub: [
-      { id: "1-1", main: { icon: FaChalkboardTeacher, label: "Lecture 1" },sub: [
-        { id: "1-1-1", main: { icon: FaStickyNote, label: "Note 1" } },
-        { id: "1-1-2", main: { icon: FaStickyNote, label: "Note 2" } },
-        { id: "1-1-3", main: { icon: FaStickyNote, label: "Note 3" } },
-      ] },
+      {
+        id: "1-1",
+        main: { icon: FaChalkboardTeacher, label: "Lecture 1" },
+        sub: [
+          { id: "1-1-1", main: { icon: FaStickyNote, label: "Note 1" } },
+          { id: "1-1-2", main: { icon: FaStickyNote, label: "Note 2" } },
+          { id: "1-1-3", main: { icon: FaStickyNote, label: "Note 3" } },
+        ],
+      },
       { id: "1-2", main: { icon: FaChalkboardTeacher, label: "Lecture 2" } },
       {
         id: "1-3",
@@ -137,6 +143,15 @@ export const navTopItems: NavItem[] = [
     sub: [
       { id: "7-1", main: { icon: FaUserFriends, label: "User List" } },
       { id: "7-2", main: { icon: FaUserShield, label: "Admins" } },
+    ],
+  },
+  {
+    id: "10", // Ensure unique ID
+    main: { icon: FaRobot, label: "AI Tools" }, // New AI tab
+    sub: [
+      { id: "10-1", main: { icon: FaLightbulb, label: "AI Suggestions" } },
+      { id: "10-2", main: { icon: FaClipboardCheck, label: "AI Tasks" } },
+      { id: "10-3", main: { icon: FaComments, label: "Chat", href: "/ai-tools/chat" } }, 
     ],
   },
 ];

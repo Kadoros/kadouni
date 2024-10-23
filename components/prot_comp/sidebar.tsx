@@ -1,20 +1,23 @@
 "use client";
 import React, { useState } from "react";
 import { FaCube, FaAngleDown, FaAngleRight } from "react-icons/fa";
-import { Button } from "@/components/ui/button"; // Adjust the import based on your structure
+import { Button } from "@/components/ui/button";
 import { navTopItems, navBottomItems, NavItem } from "@/data/navItems";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"; // Adjust the import based on your structure
+} from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import AvatarCard from "@/components/prot_comp/avatar-card";
+import Link from "next/link";
+import FolderFileTree from "@/components/prot_comp/folder-file-tree";
 
 const Sidebar: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [openedMenuItem, setOpenedMenuItem] = useState<string | null>(null);
+  const [openedMenuItem, setOpenedMenuItem] = useState<NavItem | null>(null);
   const [nestedOpenedItems, setNestedOpenedItems] = useState<Set<string>>(
     new Set()
   );
@@ -23,12 +26,12 @@ const Sidebar: React.FC = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
 
-  const toggleExpand = (menuItemId: string) => {
-    if (openedMenuItem === menuItemId) {
+  const toggleExpand = (menuItem: NavItem) => {
+    if (openedMenuItem?.id === menuItem.id) {
       setIsExpanded(!isExpanded);
     } else {
       setIsExpanded(true);
-      setOpenedMenuItem(menuItemId);
+      setOpenedMenuItem(menuItem);
     }
   };
 
@@ -60,7 +63,6 @@ const Sidebar: React.FC = () => {
                 onClick={() => toggleNestedExpand(item.id)}
               >
                 <div className="flex ">
-                  {/* Render recDeep number of spans */}
                   {Array.from({ length: recDeep }).map((_, i) => (
                     <span className="ml-4" key={i}></span>
                   ))}
@@ -98,7 +100,6 @@ const Sidebar: React.FC = () => {
               className={cn("flex items-center justify-start w-full h-10 px-4")}
               onClick={() => toggleNestedExpand(item.id)}
             >
-              {/* Render recDeep number of spans */}
               {Array.from({ length: recDeep }).map((_, i) => (
                 <span className="ml-4" key={i}></span>
               ))}
@@ -114,41 +115,47 @@ const Sidebar: React.FC = () => {
     );
   };
 
-  const renderSubMenu = (items: typeof navTopItems | typeof navBottomItems) => {
-    return items.map((item, index) => {
-      if (item.id === openedMenuItem) {
-        return (
-          <div className="flex flex-col" key={index}>
-            {item.sub && item.sub.length > 0
-              ? item.sub.map((subItem, subIndex) => (
-                  <div className="flex flex-col" key={subIndex}>
-                    {renderSubItems(subItem, subIndex, 0)}
-                  </div>
-                ))
-              : null}
-          </div>
-        );
-      }
-      return null; // Ensure the function returns something for every case
-    });
+  const renderSubMenu = (topItems: typeof navTopItems, bottomItems: typeof navBottomItems) => {
+    if (openedMenuItem?.id === "1") {
+      return <FolderFileTree />;
+    } else {
+      const combinedItems = [...topItems, ...bottomItems]; // Combine both items
+      return combinedItems.map((item, index) => {
+        if (item.id === openedMenuItem?.id) {
+          return (
+            <div className="flex flex-col" key={index}>
+              {item.sub && item.sub.length > 0
+                ? item.sub.map((subItem, subIndex) => (
+                    <div className="flex flex-col" key={subIndex}>
+                      {renderSubItems(subItem, subIndex, 0)}
+                    </div>
+                  ))
+                : null}
+            </div>
+          );
+        }
+
+        return null; // Ensure the function returns something for every case
+      });
+    }
   };
 
   return (
     <div className="flex h-full divide-x">
       <motion.div
-        className="flex flex-col h-flex-grow bg-card p-2"
+        className="flex flex-col w-flex-grow bg-card p-2 flex-shrink-0"
         initial={{ width: "4rem" }}
-        animate={{ width: isSidebarExpanded ? "9rem" : "4rem" }}
+        animate={{ width: isSidebarExpanded ? "auto" : "4rem" }}
         transition={{ duration: 0.3 }}
       >
         <div className="flex flex-col space-y-2">
           <div className="w-full h-12">
             <Button
               variant="ghost"
-              className={`flex items-center justify-start h-12 w-full bg-slate-200 `}
-              onClick={() => toggleSiderbarExpanded()}
+              className={`flex items-center justify-start h-12 w-full gap-8`}
+              onClick={toggleSiderbarExpanded}
             >
-              <FaCube className="text-gray-700 flex-shrink-0" size={16} />
+              <FaCube className="text-gray-700 flex-shrink-0 " size={16} />
               {isSidebarExpanded && (
                 <motion.span
                   className="text-lg font-semibold ml-2"
@@ -163,32 +170,56 @@ const Sidebar: React.FC = () => {
           </div>
         </div>
 
-        <nav className="flex flex-col flex-grow">
+        <nav className="flex flex-col flex-grow pt-4">
           <div className="flex flex-col space-y-2">
             {navTopItems.map((item, index) => {
               const IconComponent = item.main.icon;
               return (
-                <div key={index} className="w-full h-12">
-                  <Button
-                    variant="ghost"
-                    className={`flex items-center justify-start w-full h-12  `}
-                    onClick={() => toggleExpand(item.id)}
-                  >
-                    <IconComponent
-                      className="text-gray-700 flex-shrink-0"
-                      size={16}
-                    />
-                    {isSidebarExpanded && (
-                      <motion.span
-                        className="ml-2"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
+                <div key={index} className="flex w-full h-12">
+                  {item.main.href ? (
+                    <Link href={item.main.href}>
+                      <Button
+                        variant="ghost"
+                        className="flex items-center justify-start w-full h-12 gap-3"
                       >
-                        {item.main.label}
-                      </motion.span>
-                    )}
-                  </Button>
+                        <IconComponent
+                          className="text-gray-700 flex-shrink-0"
+                          size={16}
+                        />
+                        {isSidebarExpanded && (
+                          <motion.span
+                            className="ml-2"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            {item.main.label}
+                          </motion.span>
+                        )}
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      className="flex items-center justify-start w-full h-12 gap-3"
+                      onClick={() => toggleExpand(item)}
+                    >
+                      <IconComponent
+                        className="text-gray-700 flex-shrink-0"
+                        size={16}
+                      />
+                      {isSidebarExpanded && (
+                        <motion.span
+                          className="ml-2"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {item.main.label}
+                        </motion.span>
+                      )}
+                    </Button>
+                  )}
                 </div>
               );
             })}
@@ -198,35 +229,63 @@ const Sidebar: React.FC = () => {
               const IconComponent = item.main.icon;
               return (
                 <div key={index} className="w-full h-12">
-                  <Button
-                    variant="ghost"
-                    className={`flex items-center justify-start w-full h-12  `}
-                    onClick={() => toggleExpand(item.id)}
-                  >
-                    <IconComponent
-                      className="text-gray-700 flex-shrink-0"
-                      size={16}
-                    />
-                    {isSidebarExpanded && (
-                      <motion.span
-                        className="ml-2"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
+                  {item.main.href ? (
+                    <Link href={item.main.href}>
+                      <Button
+                        variant="ghost"
+                        className="flex items-center justify-start w-full h-12 gap-3"
+                        onClick={() => toggleExpand(item)}
                       >
-                        {item.main.label}
-                      </motion.span>
-                    )}
-                  </Button>
+                        <IconComponent
+                          className="text-gray-700 flex-shrink-0"
+                          size={16}
+                        />
+                        {isSidebarExpanded && (
+                          <motion.span
+                            className="ml-2"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            {item.main.label}
+                          </motion.span>
+                        )}
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      className="flex items-center justify-start w-full h-12 gap-3"
+                      onClick={() => toggleExpand(item)}
+                    >
+                      <IconComponent
+                        className="text-gray-700 flex-shrink-0"
+                        size={16}
+                      />
+                      {isSidebarExpanded && (
+                        <motion.span
+                          className="ml-2"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {item.main.label}
+                        </motion.span>
+                      )}
+                    </Button>
+                  )}
                 </div>
               );
             })}
+            <div className="flex justify-center items-center w-full">
+              <AvatarCard isExpanded={isSidebarExpanded} />
+            </div>
           </div>
         </nav>
       </motion.div>
       {isExpanded && (
         <motion.div
-          className="flex flex-col bg-card p-4 divide-y"
+          className="flex flex-col bg-card p-4 divide-y  w-flex-grow"
           initial={{ opacity: 0, width: 0 }}
           animate={{
             opacity: isExpanded ? 1 : 0,
@@ -235,15 +294,11 @@ const Sidebar: React.FC = () => {
           transition={{ duration: 0.3 }}
         >
           <h2 className="text-lg font-semibold">
-            {navTopItems.find((item) => item.id === openedMenuItem)?.main
-              .label ||
-              navBottomItems.find((item) => item.id === openedMenuItem)?.main
-                .label}
+            {openedMenuItem?.main.label}
           </h2>
 
-          <div>
-            {renderSubMenu(navTopItems)}
-            {renderSubMenu(navBottomItems)}
+          <div className="flex w-full">
+            {renderSubMenu(navTopItems, navBottomItems)} 
           </div>
         </motion.div>
       )}
@@ -252,4 +307,3 @@ const Sidebar: React.FC = () => {
 };
 
 export default Sidebar;
-
